@@ -1438,21 +1438,22 @@ void mgt_dispatcher(_adapter *padapter, union recv_frame *precv_frame)
 #ifdef CONFIG_AP_MODE
 	switch (get_frame_sub_type(pframe)) {
 	case WIFI_AUTH:
-		if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == _TRUE)
+		if ((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == _TRUE)
 			ptable->func = &OnAuth;
 		else
 			ptable->func = &OnAuthClient;
+		break;
 	/* pass through */
 	case WIFI_ASSOCREQ:
 	case WIFI_REASSOCREQ:
 		_mgt_dispatcher(padapter, ptable, precv_frame);
 #ifdef CONFIG_HOSTAPD_MLME
-		if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == _TRUE)
+		if ((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == _TRUE)
 			rtw_hostapd_mlme_rx(padapter, precv_frame);
 #endif
 		break;
 	case WIFI_PROBEREQ:
-		if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == _TRUE) {
+		if ((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == _TRUE) {
 #ifdef CONFIG_HOSTAPD_MLME
 			rtw_hostapd_mlme_rx(padapter, precv_frame);
 #else
@@ -1470,7 +1471,7 @@ void mgt_dispatcher(_adapter *padapter, union recv_frame *precv_frame)
 		break;
 	default:
 		_mgt_dispatcher(padapter, ptable, precv_frame);
-		if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == _TRUE)
+		if ((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == _TRUE)
 			rtw_hostapd_mlme_rx(padapter, precv_frame);
 		break;
 	}
@@ -3212,7 +3213,7 @@ unsigned int OnDeAuth(_adapter *padapter, union recv_frame *precv_frame)
 	rtw_lock_rx_suspend_timeout(8000);
 
 #ifdef CONFIG_AP_MODE
-	if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == _TRUE) {
+	if ((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == _TRUE) {
 		_irqL irqL;
 		struct sta_info *psta;
 		struct sta_priv *pstapriv = &padapter->stapriv;
@@ -3302,7 +3303,7 @@ unsigned int OnDisassoc(_adapter *padapter, union recv_frame *precv_frame)
 	rtw_lock_rx_suspend_timeout(8000);
 
 #ifdef CONFIG_AP_MODE
-	if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == _TRUE) {
+	if ((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == _TRUE) {
 		_irqL irqL;
 		struct sta_info *psta;
 		struct sta_priv *pstapriv = &padapter->stapriv;
@@ -12819,7 +12820,7 @@ void sa_query_timer_hdl(struct sta_info *psta)
 	if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == _TRUE &&
 	    check_fwstate(pmlmepriv, _FW_LINKED) == _TRUE)
 		clnt_sa_query_timeout(padapter);
-	else if (check_fwstate(pmlmepriv, WIFI_AP_STATE) == _TRUE)
+	else if ((check_fwstate(pmlmepriv, WIFI_AP_STATE)) == _TRUE)
 		report_sta_timeout_event(padapter, psta->hwaddr, WLAN_REASON_PREV_AUTH_NOT_VALID);
 }
 

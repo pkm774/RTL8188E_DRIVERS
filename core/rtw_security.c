@@ -19,7 +19,13 @@
  ******************************************************************************/
 #define  _RTW_SECURITY_C_
 
-#include <drv_types.h>
+#include "drv_types.h"
+
+struct sha256_state {
+	u64 length;
+	u32 state[8], curlen;
+	u8 buf[64];
+};
 
 static const char *_security_type_str[] = {
 	"N/A",
@@ -2142,8 +2148,9 @@ static int sha256_compress(struct sha256_state *md, unsigned char *buf)
 	int i;
 
 	/* copy state into S */
-	for (i = 0; i < 8; i++)
+	for (i = 0; i < 8; i++) {
 		S[i] = md->state[i];
+	}
 
 	/* copy the state into 512-bits into W[0..15] */
 	for (i = 0; i < 16; i++)
@@ -2152,8 +2159,8 @@ static int sha256_compress(struct sha256_state *md, unsigned char *buf)
 	/* fill W[16..63] */
 	for (i = 16; i < 64; i++) {
 		W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) +
-		       W[i - 16];
-	}
+			W[i - 16];
+	} 
 
 	/* Compress */
 #define RND(a, b, c, d, e, f, g, h, i)                          do {\

@@ -4267,7 +4267,11 @@ InitLed(
 	pLed->LedPin = LedPin;
 
 	ResetLedStatus(pLed);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+	rtw_init_timer(&(pLed->BlinkTimer), NULL, BlinkTimerCallback);
+#else
 	_init_timer(&(pLed->BlinkTimer), padapter->pnetdev, BlinkTimerCallback, pLed);
+#endif
 	_init_workitem(&(pLed->BlinkWorkItem), BlinkWorkItemCallback, pLed);
 }
 

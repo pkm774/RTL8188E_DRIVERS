@@ -4216,7 +4216,11 @@ void rtw_init_cfg80211_wifidirect_info(_adapter	*padapter)
 
 	_rtw_memset(pcfg80211_wdinfo, 0x00, sizeof(struct cfg80211_wifidirect_info));
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+	rtw_init_timer(&pcfg80211_wdinfo->remain_on_ch_timer, padapter, ro_ch_timer_process);
+#else
 	_init_timer(&pcfg80211_wdinfo->remain_on_ch_timer, padapter->pnetdev, ro_ch_timer_process, padapter);
+#endif
 }
 #endif /* CONFIG_IOCTL_CFG80211	 */
 
@@ -4872,13 +4876,25 @@ void rtw_init_wifidirect_timers(_adapter *padapter)
 {
 	struct wifidirect_info *pwdinfo = &padapter->wdinfo;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+	rtw_init_timer(&pwdinfo->find_phase_timer, padapter->pnetdev, find_phase_timer_process);
+	rtw_init_timer(&pwdinfo->restore_p2p_state_timer, padapter->pnetdev, restore_p2p_state_timer_process);
+	rtw_init_timer(&pwdinfo->pre_tx_scan_timer, padapter->pnetdev, pre_tx_scan_timer_process);
+	rtw_init_timer(&pwdinfo->reset_ch_sitesurvey, padapter->pnetdev, reset_ch_sitesurvey_timer_process);
+	rtw_init_timer(&pwdinfo->reset_ch_sitesurvey2, padapter->pnetdev, reset_ch_sitesurvey_timer_process2);
+#else
 	_init_timer(&pwdinfo->find_phase_timer, padapter->pnetdev, find_phase_timer_process, padapter);
 	_init_timer(&pwdinfo->restore_p2p_state_timer, padapter->pnetdev, restore_p2p_state_timer_process, padapter);
 	_init_timer(&pwdinfo->pre_tx_scan_timer, padapter->pnetdev, pre_tx_scan_timer_process, padapter);
 	_init_timer(&pwdinfo->reset_ch_sitesurvey, padapter->pnetdev, reset_ch_sitesurvey_timer_process, padapter);
 	_init_timer(&pwdinfo->reset_ch_sitesurvey2, padapter->pnetdev, reset_ch_sitesurvey_timer_process2, padapter);
+#endif
 #ifdef CONFIG_CONCURRENT_MODE
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+	rtw_init_timer(&pwdinfo->ap_p2p_switch_timer, padapter, ap_p2p_switch_timer_process);
+#else
 	_init_timer(&pwdinfo->ap_p2p_switch_timer, padapter->pnetdev, ap_p2p_switch_timer_process, padapter);
+#endif
 #endif
 }
 

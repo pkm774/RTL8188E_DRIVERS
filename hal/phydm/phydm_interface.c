@@ -588,7 +588,11 @@ odm_initialize_timer(
 	/*mod_timer(p_timer, jiffies+RTL_MILISECONDS_TO_JIFFIES(10));	*/
 #elif (DM_ODM_SUPPORT_TYPE & ODM_CE)
 	struct _ADAPTER *adapter = p_dm_odm->adapter;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+	rtw_init_timer(p_timer, NULL, call_back_func);
+#else
 	_init_timer(p_timer, adapter->pnetdev, call_back_func, p_dm_odm);
+#endif
 #elif (DM_ODM_SUPPORT_TYPE & ODM_WIN)
 	struct _ADAPTER *adapter = p_dm_odm->adapter;
 	PlatformInitializeTimer(adapter, p_timer, call_back_func, p_context, sz_id);
